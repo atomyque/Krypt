@@ -63,7 +63,7 @@ object TickTimers: Feature("tickTimers", island = SkyBlockIsland.THE_CATACOMBS) 
 //                    "tickTimers.goldorTicks",
 //                    ElementType.Switch(true)
 //                )
-//            ) // This is fucking pissing me off so Im not making it, I tried everything but it wont work so do it if you want
+//            ) // This is pissing me off so Im not making it, I tried everything but it wont work so do it if you want
             .addFeatureOption("HudEditor",
                 ConfigElement(
                     "tickTimers.hudEditor",
