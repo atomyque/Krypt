@@ -1,5 +1,6 @@
 package xyz.meowing.krypt.config.ui
 
+import xyz.meowing.knit.api.input.KnitKeyboard
 import xyz.meowing.knit.api.render.KnitResolution
 import xyz.meowing.vexel.core.VexelScreen
 import xyz.meowing.krypt.managers.config.ConfigManager
@@ -14,7 +15,7 @@ import java.awt.Color
 
 typealias ConfigData = Map<String, Any>
 
-class ClickGUI : VexelScreen("Zen Config") {
+object ClickGUI : VexelScreen("Zen Config") {
     private val validator = ConfigValidator()
     private val panels = mutableListOf<Panel>()
 
@@ -61,6 +62,7 @@ class ClickGUI : VexelScreen("Zen Config") {
         searchBar = SearchBar { query ->
             filterPanels(query)
         }
+
         searchBar.childOf(window)
     }
 
@@ -133,6 +135,26 @@ class ClickGUI : VexelScreen("Zen Config") {
                 panel.visible = panel.matchesSearch(query)
             }
         }
+    }
+
+    override fun onMouseScroll(horizontal: Double, vertical: Double) {
+        if (KnitKeyboard.isShiftKeyPressed) {
+            //TODO: clean up later, a bit schizo.
+            val scrollAmount = vertical.toFloat() * 20f
+
+            val leftmostX = panels.minOfOrNull { it.x } ?: 0f
+            val rightmostX = panels.maxOfOrNull { it.x + Panel.WIDTH } ?: 0f
+
+            val canScrollLeft = leftmostX < 50f
+            val canScrollRight = rightmostX > KnitResolution.windowWidth - 50f
+
+            if ((scrollAmount > 0 && canScrollLeft) || (scrollAmount < 0 && canScrollRight)) {
+                panels.forEach { panel ->
+                    panel.x += scrollAmount
+                }
+            }
+        }
+        super.onMouseScroll(horizontal, vertical)
     }
 
     override fun onCloseGui() {
