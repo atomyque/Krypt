@@ -23,8 +23,8 @@ object DungeonBreakdown : Feature(
 ) {
     override fun addConfig() {
         ConfigManager.addFeature(
-            "Dungeon Breakdown",
-            "",
+            "Dungeon breakdown",
+            "Shows a breakdown of all player's run stats at the end of the run",
             "General",
             ConfigElement(
                 "dungeonBreakdown",

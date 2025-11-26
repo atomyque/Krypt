@@ -2,7 +2,6 @@ package xyz.meowing.krypt.api.dungeons.handlers
 
 import tech.thatgravyboat.skyblockapi.utils.extentions.stripColor
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroup
-import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroups
 import tech.thatgravyboat.skyblockapi.utils.text.TextProperties.stripped
 import xyz.meowing.krypt.api.dungeons.DungeonAPI
 import xyz.meowing.krypt.api.dungeons.DungeonAPI.inBoss
@@ -14,6 +13,7 @@ import xyz.meowing.krypt.api.location.SkyBlockIsland
 import xyz.meowing.krypt.events.EventBus
 import xyz.meowing.krypt.events.core.ScoreboardEvent
 import xyz.meowing.krypt.events.core.TablistEvent
+import xyz.meowing.krypt.features.alerts.ScoreAlert
 import kotlin.math.floor
 
 /**
@@ -28,6 +28,9 @@ object ScoreCalculator {
     private val dungeonClearedPattern = Regex("Cleared: (?<percentage>\\d+)% \\(\\d+\\)")
     private val timeElapsedPattern = Regex(" Elapsed: (?:(?<hrs>\\d+)h )?(?:(?<min>\\d+)m )?(?:(?<sec>\\d+)s)?")
     private var bloodDone = false
+
+    private var alerted300 = false
+    private var alerted270 = false
 
     var deathCount: Int = 0
     var totalSecrets: Int = 0
@@ -67,6 +70,9 @@ object ScoreCalculator {
             val deathPenalty = (deathCount * 2 - 1).coerceAtLeast(0)
 
             val score = secretsScore + completedRoomScore + (20 + skillRooms - puzzlePenalty - deathPenalty).coerceIn(20, 100) + bonusScore + speedScore
+
+            if (score >= 270 && !alerted270) ScoreAlert.show270()
+            if (score >= 300 && !alerted300) ScoreAlert.show300()
 
             return score
         }
@@ -110,6 +116,8 @@ object ScoreCalculator {
         mimicKilled = false
         princeKilled = false
         bloodDone = false
+        alerted270 = false
+        alerted300 = false
     }
 
     private fun parseTablist(line: String) {

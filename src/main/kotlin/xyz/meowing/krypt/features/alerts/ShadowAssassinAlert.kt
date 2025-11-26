@@ -12,7 +12,7 @@ import xyz.meowing.krypt.managers.config.ConfigManager
 import xyz.meowing.krypt.utils.TitleUtils.showTitle
 
 @Module
-object ShadowAssassin : Feature(
+object ShadowAssassinAlert : Feature(
     "shadowAssassinAlert",
     island = SkyBlockIsland.THE_CATACOMBS
 ) {
