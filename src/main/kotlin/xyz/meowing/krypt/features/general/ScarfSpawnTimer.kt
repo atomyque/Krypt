@@ -55,7 +55,7 @@ object ScarfSpawnTimer : Feature(
                 val displayTime = time + timer.offset
 
                 if (displayTime > 0) {
-                    Render3D.drawString("${timer.name} §e${"%.1f".format(displayTime)}s", timer.pos)
+                    Render3D.drawString("${timer.name} §e${"%.1f".format(displayTime)}s", timer.pos, it.context.matrixStack())
                 }
             }
         }

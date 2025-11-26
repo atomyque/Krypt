@@ -16,6 +16,7 @@
     "client": [
         "AccessorMapState",
         "MixinAbstractContainerScreen",
+        "MixinBossHealthOverlay",
         "MixinClientConnection",
         "MixinClientPlayNetworkHandler",
         "MixinEntityRenderer",

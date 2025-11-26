@@ -182,9 +182,9 @@ object WaterBoardSolver : Feature(
                     Render3D.drawString(
                         text,
                         leverPos.toCenterVec().add(0.0, (index + lever.clickCount) * 0.5 + 1.0, 0.0),
+                        event.context.matrixStack(),
                         scale = 1.35f,
-                        depth = true,
-                        dynamic = false
+                        depth = true
                     )
                 }
             }

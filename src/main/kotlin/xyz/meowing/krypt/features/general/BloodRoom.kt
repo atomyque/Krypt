@@ -117,7 +117,7 @@ object BloodRoom : Feature(
                 "Box color",
                 ConfigElement(
                     "bloodRoom.boxColor",
-                    ElementType.ColorPicker(Color(255, 0, 255, 255))
+                    ElementType.ColorPicker(Color(255, 0, 255, 127))
                 )
             )
             .addFeatureOption(
@@ -310,9 +310,9 @@ object BloodRoom : Feature(
                     Render3D.drawString(
                         String.format("%.2fs", timeDisplay),
                         endPoint.add(0.0, 2.0, 0.0),
+                        event.context.matrixStack(),
                         scale = 1f,
-                        depth = false,
-                        dynamic = false
+                        depth = false
                     )
                 }
             }

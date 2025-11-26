@@ -34,6 +34,8 @@ object DoorHighlight : Feature(
     private var bloodKeyObtained = false
     private var bloodOpen = false
 
+    private val filled by ConfigDelegate<Boolean>("doorHighlight.filled")
+    private val outlined by ConfigDelegate<Boolean>("doorHighlight.outlined")
     private val witherWithKey by ConfigDelegate<Color>("doorHighlight.witherWithKey")
     private val witherNoKey by ConfigDelegate<Color>("doorHighlight.witherNoKey")
     private val bloodWithKey by ConfigDelegate<Color>("doorHighlight.bloodWithKey")
@@ -51,31 +53,45 @@ object DoorHighlight : Feature(
                 )
             )
             .addFeatureOption(
+                "Filled box",
+                ConfigElement(
+                    "doorHighlight.filled",
+                    ElementType.Switch(false)
+                )
+            )
+            .addFeatureOption(
+                "Outlined box",
+                ConfigElement(
+                    "doorHighlight.outlined",
+                    ElementType.Switch(true)
+                )
+            )
+            .addFeatureOption(
                 "Wither door with key",
                 ConfigElement(
                     "doorHighlight.witherWithKey",
-                    ElementType.ColorPicker(Color(0, 255, 0, 100))
+                    ElementType.ColorPicker(Color(0, 255, 0, 255))
                 )
             )
             .addFeatureOption(
                 "Wither door without key",
                 ConfigElement(
                     "doorHighlight.witherNoKey",
-                    ElementType.ColorPicker(Color(50, 50, 50, 100))
+                    ElementType.ColorPicker(Color(255, 255, 255, 255))
                 )
             )
             .addFeatureOption(
                 "Blood door with key",
                 ConfigElement(
                     "doorHighlight.bloodWithKey",
-                    ElementType.ColorPicker(Color(0, 255, 0, 100))
+                    ElementType.ColorPicker(Color(0, 255, 0, 255))
                 )
             )
             .addFeatureOption(
                 "Blood door without key",
                 ConfigElement(
                     "doorHighlight.bloodNoKey",
-                    ElementType.ColorPicker(Color(255, 0, 0, 100))
+                    ElementType.ColorPicker(Color(255, 0, 0, 255))
                 )
             )
     }
@@ -128,14 +144,28 @@ object DoorHighlight : Feature(
                     x.toDouble() + 2.0, y.toDouble() + 4.0, z.toDouble() + 2
                 )
 
-                Render3D.drawSpecialBB(
-                    box,
-                    color,
-                    event.context.consumers(),
-                    event.context.matrixStack(),
-                    phase = true,
-                    customFillAlpha = 0.6f
-                )
+                val matrixStack = event.context.matrixStack()
+                val consumers = event.context.consumers()
+
+                if (filled) {
+                    Render3D.drawFilledBB(
+                        box,
+                        color,
+                        consumers,
+                        matrixStack,
+                        phase = true
+                    )
+                }
+
+                if (outlined) {
+                    Render3D.drawOutlinedBB(
+                        box,
+                        color.darker(),
+                        consumers,
+                        matrixStack,
+                        phase = true
+                    )
+                }
             }
         }
     }
