@@ -61,7 +61,7 @@ object Main {
 
         DungeonAPI.uniqueDoors.forEach { door ->
             if (door.state != DoorState.DISCOVERED) return@forEach
-            val type = if (door.opened && door.type == DoorType.WITHER && changeDoorColorOnOpen) DoorType.NORMAL else door.type
+            val type = if (door.opened && !door.isFairyDoor && door.type == DoorType.WITHER && changeDoorColorOnOpen) DoorType.NORMAL else door.type
             val color = type.color
             val (cx, cy) = door.componentPos.let { it.first / 2 * SPACING to it.second / 2 * SPACING }
             val vert = door.rotation == 0

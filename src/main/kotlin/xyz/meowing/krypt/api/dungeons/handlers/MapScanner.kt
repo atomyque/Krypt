@@ -207,12 +207,15 @@ object MapScanner {
                 setState(DoorState.DISCOVERED)
                 updateFairyDoorStatus()
             }
+
             DungeonAPI.addDoor(newDoor)
         } else {
             existingDoor.setState(DoorState.DISCOVERED)
+
             if (existingDoor.type == DoorType.NORMAL && type != DoorType.NORMAL) {
                 existingDoor.setType(type)
             }
+
             existingDoor.updateFairyDoorStatus()
         }
     }
