@@ -9,4 +9,15 @@ object DungeonPhase {
         P5
         ;
     }
+
+    enum class P3 {
+        S1,
+        S2,
+        S3,
+        S4
+        ;
+
+        val number: Int
+            get() = ordinal + 1
+    }
 }

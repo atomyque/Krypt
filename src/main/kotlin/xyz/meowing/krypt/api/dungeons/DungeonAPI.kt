@@ -5,20 +5,17 @@ package xyz.meowing.krypt.api.dungeons
 import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import net.minecraft.world.entity.EntityType
-import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.monster.Zombie
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.SkullBlockEntity
 import tech.thatgravyboat.skyblockapi.api.data.Perk
-import tech.thatgravyboat.skyblockapi.utils.extentions.getTexture
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.anyMatch
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.find
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findOrNull
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findThenNull
 import tech.thatgravyboat.skyblockapi.utils.regex.matchWhen
 import tech.thatgravyboat.skyblockapi.utils.text.TextProperties.stripped
-import xyz.meowing.knit.api.KnitChat
 import xyz.meowing.knit.api.KnitClient
 import xyz.meowing.knit.api.KnitClient.player
 import xyz.meowing.knit.api.KnitPlayer
@@ -100,6 +97,7 @@ object DungeonAPI {
 
     private val uniqueClassRegex = Regex("Your .+ stats are doubled because you are the only player using this class!")
     private val mimicRegex = Regex("""^Party > (?:\[[\w+]+] )?\w{1,16}: (.*)$""")
+    private val sectionCompleteRegex = Regex("""^\w{1,16} (?:activated|completed) a \w+! \((?:7/7|8/8)\)$""")
 
     private val mimicMessages = listOf("mimic dead", "mimic dead!", "mimic killed", "mimic killed!", $$"$skytils-dungeon-score-mimic$")
 
@@ -133,7 +131,9 @@ object DungeonAPI {
     var bloodKeys = 0
         private set
 
-    var f7Phase: DungeonPhase.F7? = null
+    var F7Phase: DungeonPhase.F7? = null
+        private set
+    var P3Phase: DungeonPhase.P3? = null
         private set
 
     var floor: DungeonFloor? = null
@@ -265,6 +265,20 @@ object DungeonAPI {
                     floorStarted = true
                     floor?.let { EventBus.post(DungeonEvent.Start(it)) }
                 }
+
+                sectionCompleteRegex.matches(message) -> {
+                    P3Phase = P3Phase?.let {
+                        DungeonPhase.P3.entries.getOrNull(it.ordinal + 1)
+                    }
+                }
+
+                message == "[BOSS] Storm: I should have known that I stood no chance." -> {
+                    P3Phase = DungeonPhase.P3.S1
+                }
+
+                message == "The Core entrance is opening!" -> {
+                    P3Phase = null
+                }
             }
 
             matchWhen(message) {
@@ -301,7 +315,7 @@ object DungeonAPI {
             if (floor?.floorNumber == 7 && inBoss) {
                 val y = player?.y ?: return@registerIn
 
-                f7Phase = when {
+                F7Phase = when {
                     y > 210 -> DungeonPhase.F7.P1
                     y > 155 -> DungeonPhase.F7.P2
                     y > 100 -> DungeonPhase.F7.P3
@@ -423,7 +437,8 @@ object DungeonAPI {
 
         uniqueClass = false
         inBoss = false
-        f7Phase = null
+        F7Phase = null
+        P3Phase = null
         floor = null
 
         WorldScanner.reset()
